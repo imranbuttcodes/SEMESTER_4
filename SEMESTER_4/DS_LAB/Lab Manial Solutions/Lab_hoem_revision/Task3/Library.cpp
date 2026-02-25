@@ -26,16 +26,36 @@ void Library::displayCollection() {
 }
 
 void Library::sortBooksByPages() {
-    sort(books_.begin(), books_.end(),[](Book book1, Book book2) {
-        return book1.pages_ < book2.pages_;
-    } );
+
+    for (int i = 0; i < books_.size() - 1; i++)
+    {
+        int smallestIndex = i;
+        for (int j = 0; j < books_.size(); j++)
+        {
+            if (books_[j].pages_ < books_[smallestIndex].pages_) {
+                smallestIndex = j;
+            }
+        }
+
+        swap(books_[smallestIndex], books_[i]);
+    }
+    
 }
 
 
 void Library::sortNewspapersByEdition() {
-    sort(newspapers_.begin(), newspapers_.end(),[](Newspaper np1, Newspaper np2) {
-        return np1.edition_ < np2.edition_;
-    } );
+    for (int i = 0; i < newspapers_.size() - 1; i++) {
+        int smallestIndex = i;
+        for (int j = 0; j < newspapers_.size(); j++) {            
+            if (newspapers_[j].edition_ < newspapers_[smallestIndex].edition_) {
+                smallestIndex = j;
+            }
+        }
+        
+        swap(newspapers_[i], newspapers_[smallestIndex]);        
+    
+    }
+    
 }
 
 
