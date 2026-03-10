@@ -1,8 +1,3 @@
-Perfect bro! That’s a **very logical order** of learning. 🔥
-First understand the **goals**, then later the **schools of thought**.
-
----
-
 # 🧠 The 4 Goals of Psychology
 
 Psychologists study human behavior with **four main objectives**.
