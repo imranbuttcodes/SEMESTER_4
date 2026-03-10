@@ -6,7 +6,7 @@ Book::Book(int max_size): MAX_SIZE_(max_size) {
 }
 
 void Book::push(string books) {
-    if (top_ == MAX_SIZE_ - 1) {
+    if (isFull()) {
         cout << "Stack Overflow: Stack is full!" << endl;
         return;
     }
