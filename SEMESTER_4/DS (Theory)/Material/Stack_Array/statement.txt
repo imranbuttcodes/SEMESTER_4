@@ -1,0 +1,11 @@
+A web browser needs a history management system that allows users to navigate through their previously visited websites using back and forward buttons. The system must maintain the browsing session history and support the following functionality:
+
+Visit New Pages: When a user visits a website, the URL is added to the history stack
+
+Navigate Back: Users can return to previously visited pages in reverse order (last visited, first to go back to)
+
+View Current Page: Display the webpage the user is currently viewing
+
+Display History: Show all visited pages in the current session from oldest to newest
+
+Clear History: Remove all browsing history when starting a new session
