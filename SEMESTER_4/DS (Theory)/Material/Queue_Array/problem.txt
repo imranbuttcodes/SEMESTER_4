@@ -1,0 +1,1 @@
+Sunrise Grand Hotel receives multiple room service orders throughout the day. The hotel kitchen can only prepare a limited number of orders simultaneously. The hotel needs a simple system to manage pending orders in a circular manner, ensuring that orders are processed in the order they arrive (FIFO - First In First Out).

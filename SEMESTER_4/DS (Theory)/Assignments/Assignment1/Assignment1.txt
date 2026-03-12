@@ -1,0 +1,53 @@
+SOCIAL MEDIA MESSAGING SYSTEM - ASSIGNMENT 1
+------------------------------------------------
+Course: Data Structures
+Topic: Stack and Queue Implementation using Arrays
+Total Marks: 100
+
+PROBLEM STATEMENT:
+You are tasked with building a simplified Social Media Messaging System that handles two main 
+features: Undo/Redo functionality for comments (using Stack) and Message Queue for direct 
+messages (using Queue). Both data structures must be implemented using arrays only.
+
+PART A: UNDO/REDO STACK (50 marks)
+------------------------------------------------
+Implement a stack using arrays to manage comment operations with the following specifications:
+1. Maximum size of stack: 100 operations
+2. Each stack element should store:
+   - Post ID (integer)
+   - Comment text (string, max 200 chars)
+   - Action type (1 for add, 2 for delete)
+   - Timestamp (simulated using counter)
+
+Required Functions:
+- pushComment(postId, commentText, actionType) - Push comment operation
+- popComment() - Pop last operation for undo
+- peekLastAction() - View last action without removing
+- displayStack() - Show all pending undo operations
+- isFull() / isEmpty() - Check stack status
+- searchComment(keyword) - Search comments in stack
+
+PART B: MESSAGE QUEUE (50 marks)
+------------------------------------------------
+Implement a circular queue using arrays for direct messages with:
+1. Maximum queue size: 50 messages
+2. Each message should contain:
+   - Sender ID (integer)
+   - Receiver ID (integer)
+   - Message text (string, max 500 chars)
+   - Priority (1-5, where 5 is highest)
+   - Status (0-pending, 1-sent)
+
+Required Functions:
+- enqueueMessage(senderId, receiverId, message, priority) - Add to queue
+- dequeueMessage() - Process and remove message
+- displayQueue() - Show all pending messages
+- processHighestPriority() - Process message with highest priority
+- searchBySender(senderId) - Find all messages from sender
+- countMessagesByPriority(priority) - Count messages with given priority
+- peekFront() / peekRear() - View front/rear messages
+- isFull() / isEmpty() - Check queue status
+
+DELIVERABLES:
+1. Complete C++ program implementing both structures
+2. Menu-driven interface for testing all functions
