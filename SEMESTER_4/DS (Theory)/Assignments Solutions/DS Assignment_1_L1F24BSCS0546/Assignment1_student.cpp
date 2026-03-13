@@ -141,9 +141,37 @@ public:
             return;
         }
         
+        bool foundAny = false;
         for (int i = 0; i <= top; i++) {
-            string matching_keyword = "";
-            for (int j = 0; )
+            bool found = false;
+            for (int j = 0; j < strlen(stack[i].commentText); j++) {
+                if (keyword[0] == stack[i].commentText[j]) {
+                    int k = j;
+                    found = true;
+                    for (int l = 0; (l < strlen(keyword) && k < strlen(stack[i].commentText)); l++, k++) {
+                        if (keyword[l] != stack[i].commentText[k]) {
+                            found = false;
+                            break;
+                        }
+                    }
+                    if (found) {
+                        break;
+                    }
+                    
+                }
+            }
+            if (found) {
+            foundAny = true;
+            cout << "Comment Found Containing Keyword: " << keyword << endl;
+            cout << "Comment Details" << endl;
+            cout << (stack[i].actionType == 1 ? "Added Comment" : "Deleted Comment!" ) << endl;
+            cout << "Post Id: " << stack[i].postId << endl;
+            cout << "TimeStamp: " << stack[i].timestamp << endl;
+            cout << "Comment: " << stack[i].commentText << endl;
+            }
+        }
+        if (!foundAny) {
+            cout << "No Commnets Found COntaining the keyword: " << keyword << "!" << endl;
         }
         
 
@@ -151,7 +179,7 @@ public:
     
     // TODO: Get stack size
     int getSize() {
-       // Write your code here
+       return top;
     }
 };
 
@@ -174,22 +202,34 @@ public:
     // TODO: Check if queue is empty
     bool isEmpty() {
         // Implement this function
-       
+        return count == 0;
     }
     
     // TODO: Check if queue is full
     bool isFull() {
         // Implement this function
-       
+       return count == MAX_QUEUE_SIZE;
     }
     
     // TODO: Add message to queue
     void enqueueMessage(int senderId, int receiverId, 
                         const char* messageText, int priority) {
        
-        
+         
         // Write your code here
-        
+
+        if (isFull()) {
+            cout << "Queue Already full! Please Wait..." << endl;
+            return;
+        }
+        rear = (rear + 1) % MAX_QUEUE_SIZE;
+        queue[rear].priority = priority;
+        queue[rear].senderId = senderId;
+        queue[rear].receiverId = receiverId;
+        queue[rear].status = 1;
+        strcpy(queue[rear].messageText, messageText);
+        ++count;
+
         cout << "Message queued successfully." << endl;
     }
     
@@ -197,8 +237,16 @@ public:
     Message dequeueMessage() {
         
         // Write your code here
-        
-        return emptyMsg;
+        Message emptyMsg;
+        if (isEmpty()) {
+            cout << "Sorry There Are No Messages to remove!" << endl;
+            return emptyMsg;
+        }
+
+        Message front_msg = queue[front];
+        front = (front + 1) % MAX_QUEUE_SIZE;
+        --count;
+        return front_msg;
     }
     
     // TODO: Display all messages in queue
@@ -206,6 +254,19 @@ public:
         
         cout << "\n===== MESSAGE QUEUE CONTENTS =====" << endl;
         // Write your code here to display all messages
+        if (isEmpty()) {
+            cout << "No Messages to display!" << endl;
+            return;
+        }
+        int temp_front = front;
+        for (int current_count = 0; current_count < count; current_count++) {
+            cout << "Sender ID: " << queue[temp_front].senderId << endl;
+            cout << "Receiver ID: " << queue[temp_front].receiverId << endl;
+            cout << "Priority: " << queue[temp_front].priority << endl;
+            cout << "Status: " << (queue[temp_front].status == 0 ? "Pending": "Sent" ) << endl;
+            cout << "Message: " << queue[temp_front].messageText << endl;
+            temp_front = (temp_front + 1) % MAX_QUEUE_SIZE;
+        }
     }
     
     // TODO: Process message with highest priority
@@ -213,14 +274,59 @@ public:
         
         cout << "Processing highest priority message..." << endl;
         // Write your code here to find and process highest priority message
+        if (isEmpty()) {
+            cout << "Sorry! There are Zero messages available!" << endl;
+            return;
+        }
+
+        int max_priority = queue[0].priority;
+        int max_prority_idx = front;
+        int temp_front = front;
+        for (int current_count = 0; current_count < count; current_count++)
+        {
+            if (queue[temp_front].priority > max_priority) {
+                max_priority = queue[temp_front].priority;
+                max_prority_idx = temp_front;
+            }
+            temp_front = (temp_front + 1) % MAX_QUEUE_SIZE;
+        }
+
+        cout << "--------------------- Message With the highest priority ---------------------" << endl;
+        cout << "Sender ID: " << queue[max_prority_idx].senderId << endl;
+        cout << "Receiver ID: " << queue[max_prority_idx].receiverId << endl;
+        cout << "Priority: " << queue[max_prority_idx].priority << endl;
+        cout << "Status: " << (queue[max_prority_idx].status == 0 ? "Pending": "Sent" ) << endl;
+        cout << "Message: " << queue[max_prority_idx].messageText << endl;
+        
     }
     
     // TODO: Search messages by sender
     void searchBySender(int senderId) {
         cout << "Searching for messages from sender: " << senderId << endl;
         
-        // Write your code here
-        
+        // Write your code here  
+        if (isEmpty()) {
+            cout << "Sorry! There are Zero messages available!" << endl;
+            return;
+        }
+
+        bool found = false;
+        int temp_front = front;
+        cout << "------------------ Search Results --------------------" << endl;
+        for (int current_count = 0; current_count < count; current_count++) {
+            if (queue[temp_front].senderId == senderId) {
+                found = true;
+                cout << "Sender ID: " << queue[temp_front].senderId << endl;
+                cout << "Receiver ID: " << queue[temp_front].receiverId << endl;
+                cout << "Priority: " << queue[temp_front].priority << endl;
+                cout << "Status: " << (queue[temp_front].status == 0 ? "Pending": "Sent" ) << endl;
+                cout << "Message: " << queue[temp_front].messageText << endl << endl;
+            }
+            temp_front = (temp_front + 1) % MAX_QUEUE_SIZE;
+        }
+        if (!found) {
+            cout << "Sender with this id " << senderId << " not found!" << endl;
+        }
     }
     
     // TODO: Count messages by priority
@@ -228,15 +334,42 @@ public:
         
         
         // Write your code here
-        
+        if (isEmpty()) {
+            cout << "Zero Messages Available!" << endl;
+            return -1;
+        }
+
+        int t_count = 0;
+        int temp_front = front;
+        for (int i = 0; i < count; i++) {
+            if (queue[temp_front].priority == priority) {
+                t_count++;
+            }
+            temp_front = (temp_front + 1) % MAX_QUEUE_SIZE;
+
+        }
+        return t_count;
+
         
     }
     
     // TODO: View front message without removing
     void peekFront() {
         
-        
         // Write your code here
+
+            if (isEmpty()) {
+            cout << "Zero Messages Avaialable!" << endl;
+            return;
+        }
+    
+        cout << "----------------- Peek Front Message Details -------------------\n";
+        cout << "Sender ID: " << queue[front].senderId << endl;
+        cout << "Receiver ID: " << queue[front].receiverId << endl;
+        cout << "Priority: " << queue[front].priority << endl;
+        cout << "Status: " << (queue[front].status == 0 ? "Pending": "Sent" ) << endl;
+        cout << "Message: " << queue[front].messageText << endl << endl;
+
     }
     
     // TODO: View rear message without removing
@@ -244,11 +377,26 @@ public:
         
         
         // Write your code here
+
+            if (isEmpty()) {
+            cout << "Zero Messages Avaialable!" << endl;
+            return;
+        }
+    
+        cout << "----------------- Peek Rear Message Details -------------------\n";
+        cout << "Sender ID: " << queue[rear].senderId << endl;
+        cout << "Receiver ID: " << queue[rear].receiverId << endl;
+        cout << "Priority: " << queue[rear].priority << endl;
+        cout << "Status: " << (queue[rear].status == 0 ? "Pending": "Sent" ) << endl;
+        cout << "Message: " << queue[rear].messageText << endl << endl;
+
+
     }
     
     // TODO: Get queue size
     int getSize() {
         // Write your code here
+        return count;
     }
 };
 
@@ -295,6 +443,11 @@ int main() {
                 
             case 2:
                 // TODO: Call popComment and display result
+                CommentOperation l_comment = undoStack.popComment();
+                cout << (l_comment.actionType == 1 ? "Added Comment" : "Deleted Comment!" ) << endl;
+                cout << "Post Id: " << l_comment.postId << endl;
+                cout << "TimeStamp: " << l_comment.timestamp << endl;
+                cout << "Comment: " << l_comment.commentText << endl;
                 break;
                 
             case 3:
@@ -327,6 +480,12 @@ int main() {
                 
             case 7:
                 // TODO: Call dequeueMessage and display result
+                Message msg = msgQueue.dequeueMessage();
+                cout << "Sender ID: " << msg.senderId << endl;
+                cout << "Receiver ID: " << msg.receiverId << endl;
+                cout << "Priority: " << msg.priority << endl;
+                cout << "Status: " << (msg.status == 0 ? "Pending": "Sent" ) << endl;
+                cout << "Message: " << msg.messageText << endl;
                 break;
                 
             case 8:
