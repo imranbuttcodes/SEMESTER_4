@@ -70,7 +70,7 @@ public:
             cout << "Overflow! Comment Stack is full right now!" << endl;
             return;
         }
-        if (commentText == nullptr || (actionType < 1 && actionType > 2) ) {
+        if (commentText == nullptr || (actionType < 1 || actionType > 2) ) {
             cout << "Operation Can't be performed as either commentText is empty or action Type is invalid!" << endl;
             return;
         }
@@ -88,7 +88,7 @@ public:
          
         if (isEmpty()) {
             cout << "Sorry! No Comments remained to pop!" << endl;
-            return;
+            return CommentOperation();
         }
         
         CommentOperation top_comment_operation = stack[top];
@@ -105,8 +105,8 @@ public:
             cout << "No Action Performed yet!" << endl;
             return;
         }
-        cout << "Last Action: " << (stack[top].actionType == 1 ? "A Comment Added" : "Comment Deleted!" ) << endl;
-        cout << (stack[top].actionType == 1 ? "Added Comment" : "Deleted Comment!" ) << endl;
+        cout << "--------------------- Last Peek Action ---------------------\n";
+        cout << "Last Action: " << (stack[top].actionType == 1 ? "Added Comment" : "Deleted Comment!" ) << endl;
         cout << "Post Id: " << stack[top].postId << endl;
         cout << "TimeStamp: " << stack[top].timestamp << endl;
         cout << "Comment: " << stack[top].commentText << endl;
@@ -123,10 +123,10 @@ public:
             return;
         }
         for (int temp_top = top; temp_top >= 0; temp_top--) {
-            cout << (stack[temp_top].actionType == 1 ? "Added Comment" : "Deleted Comment!" ) << endl;
+            cout << "Action Type: " << (stack[temp_top].actionType == 1 ? "Added Comment" : "Deleted Comment!" ) << endl;
             cout << "Post Id: " << stack[temp_top].postId << endl;
             cout << "TimeStamp: " << stack[temp_top].timestamp << endl;
-            cout << "Comment: " << stack[temp_top].commentText << endl;
+            cout << "Comment: " << stack[temp_top].commentText << endl << endl;
         }
     }
     
@@ -164,7 +164,7 @@ public:
             foundAny = true;
             cout << "Comment Found Containing Keyword: " << keyword << endl;
             cout << "Comment Details" << endl;
-            cout << (stack[i].actionType == 1 ? "Added Comment" : "Deleted Comment!" ) << endl;
+            cout << "Action Type: " << (stack[i].actionType == 1 ? "Added Comment" : "Deleted Comment!" ) << endl;
             cout << "Post Id: " << stack[i].postId << endl;
             cout << "TimeStamp: " << stack[i].timestamp << endl;
             cout << "Comment: " << stack[i].commentText << endl;
@@ -179,7 +179,7 @@ public:
     
     // TODO: Get stack size
     int getSize() {
-       return top;
+       return top + 1;
     }
 };
 
@@ -226,7 +226,7 @@ public:
         queue[rear].priority = priority;
         queue[rear].senderId = senderId;
         queue[rear].receiverId = receiverId;
-        queue[rear].status = 1;
+        queue[rear].status = 0;
         strcpy(queue[rear].messageText, messageText);
         ++count;
 
@@ -264,7 +264,7 @@ public:
             cout << "Receiver ID: " << queue[temp_front].receiverId << endl;
             cout << "Priority: " << queue[temp_front].priority << endl;
             cout << "Status: " << (queue[temp_front].status == 0 ? "Pending": "Sent" ) << endl;
-            cout << "Message: " << queue[temp_front].messageText << endl;
+            cout << "Message: " << queue[temp_front].messageText << endl<<endl;;
             temp_front = (temp_front + 1) % MAX_QUEUE_SIZE;
         }
     }
@@ -279,7 +279,7 @@ public:
             return;
         }
 
-        int max_priority = queue[0].priority;
+        int max_priority = queue[front].priority;
         int max_prority_idx = front;
         int temp_front = front;
         for (int current_count = 0; current_count < count; current_count++)
@@ -430,7 +430,7 @@ int main() {
         cin >> choice;
         
         switch(choice) {
-            case 1:
+            case 1: {
                 cout << "Enter Post ID: ";
                 cin >> postId;
                 cin.ignore();
@@ -439,33 +439,41 @@ int main() {
                 cout << "Enter Action Type (1-Add, 2-Delete): ";
                 cin >> actionType;
                 undoStack.pushComment(postId, text, actionType);
+            
                 break;
-                
+            }    
             case 2:
-                // TODO: Call popComment and display result
+             {   // TODO: Call popComment and display result
+                if (!undoStack.isEmpty()) {
                 CommentOperation l_comment = undoStack.popComment();
-                cout << (l_comment.actionType == 1 ? "Added Comment" : "Deleted Comment!" ) << endl;
+                cout << "--------------------- Poped Comment Details ---------------------\n";
+                cout << "Action Type: " << (l_comment.actionType == 1 ? "Added Comment" : "Deleted Comment!" ) << endl;
                 cout << "Post Id: " << l_comment.postId << endl;
                 cout << "TimeStamp: " << l_comment.timestamp << endl;
                 cout << "Comment: " << l_comment.commentText << endl;
+                } else  {
+                    cout << "Sorry There are no comments to undo!" << endl;
+                }
                 break;
-                
+             }  
             case 3:
-                undoStack.peekLastAction();
+              {  undoStack.peekLastAction();
                 break;
-                
+              } 
             case 4:
-                undoStack.displayStack();
+               { undoStack.displayStack();
                 break;
-                
+               }
             case 5:
+                {
                 cin.ignore();
                 cout << "Enter keyword to search: ";
                 cin.getline(keyword, MAX_STRING_LENGTH);
                 undoStack.searchComment(keyword);
                 break;
-                
+                }
             case 6:
+                {
                 cout << "Enter Sender ID: ";
                 cin >> senderId;
                 cout << "Enter Receiver ID: ";
@@ -477,50 +485,62 @@ int main() {
                 cin >> priority;
                 msgQueue.enqueueMessage(senderId, receiverId, text, priority);
                 break;
-                
+                }
             case 7:
-                // TODO: Call dequeueMessage and display result
+                {// TODO: Call dequeueMessage and display result
+                if (!msgQueue.isEmpty()) {
                 Message msg = msgQueue.dequeueMessage();
+                cout << "--------------------- Message Details ---------------------\n";
                 cout << "Sender ID: " << msg.senderId << endl;
                 cout << "Receiver ID: " << msg.receiverId << endl;
                 cout << "Priority: " << msg.priority << endl;
                 cout << "Status: " << (msg.status == 0 ? "Pending": "Sent" ) << endl;
                 cout << "Message: " << msg.messageText << endl;
+                } else {
+                    cout << "No Messages to process!" << endl;
+                }
                 break;
-                
+                }
             case 8:
+                {
                 msgQueue.displayQueue();
                 break;
-                
+                }
             case 9:
+                {
                 msgQueue.processHighestPriority();
                 break;
-                
+                }
             case 10:
+                {
                 cout << "Enter Sender ID to search: ";
                 cin >> senderId;
                 msgQueue.searchBySender(senderId);
                 break;
-                
+                }
             case 11:
+                {
                 cout << "Enter priority to count: ";
                 cin >> priority;
                 cout << "Messages with priority " << priority << ": " 
                      << msgQueue.countMessagesByPriority(priority) << endl;
                 break;
-                
+                }
             case 12:
+                {
                 msgQueue.peekFront();
                 break;
-                
+                }
             case 13:
+                {
                 msgQueue.peekRear();
                 break;
-                
+                }
             case 0:
+                {
                 cout << "Exiting system. Goodbye!" << endl;
                 break;
-                
+                }
             default:
                 cout << "Invalid choice! Please try again." << endl;
         }
